@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  VOLUNTEER
+  ADMIN
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id          String          @id @default(uuid())
+  name        String
+  email       String          @unique
+  phone       String?
+  password    String
+  role        Role            @default(VOLUNTEER)
+  city        String?
+  skills      String?
+  status      ApprovalStatus  @default(PENDING)
+  totalHours  Int             @default(0)
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt   DateTime        @default(now())
+  profilePic  String?
+
+  registrations Registration[]
+  certificates  Certificate[]
+  feedbacks     Feedback[]
+}
+
+model Event {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  category      String
+  city          String
+  location      String?
+  date          DateTime
+  seatsRequired Int
+  createdAt     DateTime @default(now())
+  registrations Registration[]
+  feedbacks Feedback[]
+}
+
+enum AttendanceStatus {
+  REGISTERED
+  PRESENT
+  ABSENT
+}
+
+model Registration {
+  id           String            @id @default(uuid())
+  userId       String
+  eventId      String
+  status       AttendanceStatus  @default(REGISTERED)
+  hoursAwarded Int               @default(0)
+  createdAt    DateTime          @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Certificate {
+  id           String   @id @default(uuid())
+  userId       String
+  fileUrl      String
+  hoursAtIssue Int
+  issuedAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+}
