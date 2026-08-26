@@ -24,7 +24,7 @@ export default function SplashScreen({ navigation }) {
 
     const timer = setTimeout(() => {
       navigation?.replace("Onboarding");
-    }, 3500); // 3.5s transition time
+    }, 3000); // 3.5s transition time
 
     return () => clearTimeout(timer);
   }, [fadeAnim, scaleAnim, navigation]);
