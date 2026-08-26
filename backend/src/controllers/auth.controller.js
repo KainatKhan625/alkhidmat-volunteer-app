@@ -16,6 +16,34 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, phone, password, city, skills } = req.body;
 
+    // Validate name
+    if (!name || name.trim().length < 3 || !/^[a-zA-Z\s]+$/.test(name.trim())) {
+      return res.status(400).json({ message: "Please enter a valid full name (letters only, min 3 characters)" });
+    }
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      return res.status(400).json({ message: "Please enter a valid email address" });
+    }
+
+    // Validate phone (Pakistani mobile format)
+    const phoneRegex = /^03[0-9]{9}$/;
+    if (!phone || !phoneRegex.test(phone.trim())) {
+      return res.status(400).json({ message: "Please enter a valid 11-digit phone number starting with 03" });
+    }
+
+    // Validate city
+    if (!city || city.trim().length < 2) {
+      return res.status(400).json({ message: "City is required" });
+    }
+
+    // Validate password
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    if (!password || !passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 6 characters and include letters and numbers" });
+    }
+
     // check if email already used
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -26,13 +54,21 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: { name, email, phone, password: hashedPassword, city, skills },
+      data: {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password: hashedPassword,
+        city: city.trim(),
+        skills,
+        status: "APPROVED", // Auto-approved; validation above ensures data quality instead of manual review
+      },
     });
 
     const token = generateToken(user);
 
     res.status(201).json({
-      message: "Signup successful, pending admin approval",
+      message: "Signup successful",
       token,
       user: { id: user.id, name: user.name, email: user.email, status: user.status },
     });
