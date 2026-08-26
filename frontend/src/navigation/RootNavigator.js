@@ -5,10 +5,12 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { useOnboarding } from "../context/onboardingcontext";
 
+// Screen Imports
+import SplashScreen from "../screens/Splash/SplashScreen";
+import OnboardingScreen from "../screens/Onboarding/onboardingscreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignupScreen from "../screens/auth/SignupScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
-import OnboardingScreen from "../screens/Onboarding/onboardingscreen";
 import VolunteerTabs from "./VolunteerTabs";
 
 const Stack = createNativeStackNavigator();
@@ -28,7 +30,10 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Onboarding" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+        {/* Splash Screen (App Starts Here) */}
+        <Stack.Screen name="Splash" component={SplashScreen} />
+
         {/* Onboarding Screen */}
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
 
