@@ -7,6 +7,8 @@ import {
   StyleSheet,
   RefreshControl,
   Linking,
+  Modal,
+  Image,
 } from "react-native";
 import { getMyRegistrations } from "../../services/eventService";
 
@@ -20,6 +22,7 @@ export default function MyRegistrationsScreen() {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedQR, setSelectedQR] = useState(null);
 
   const fetchRegistrations = async () => {
     try {
@@ -87,12 +90,49 @@ export default function MyRegistrationsScreen() {
                 >
                   <Text style={styles.certButtonText}>View Certificate</Text>
                 </TouchableOpacity>
+                
+
+                
               )}
+
+              {item.status === "REGISTERED" && item.qrCode && (
+  <TouchableOpacity
+    style={styles.qrButton}
+    onPress={() => setSelectedQR(item.qrCode)}
+  >
+    <Text style={styles.qrButtonText}>Show QR Code</Text>
+  </TouchableOpacity>
+)}
             </View>
           );
         }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
       />
+
+      <Modal
+        visible={!!selectedQR}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedQR(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Your QR Code</Text>
+            <Text style={styles.modalSubtitle}>
+              Show this to the coordinator at the event for attendance
+            </Text>
+            {selectedQR && (
+              <Image source={{ uri: selectedQR }} style={styles.qrImage} />
+            )}
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setSelectedQR(null)}
+            >
+              <Text style={styles.modalCloseButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -135,4 +175,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   certButtonText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600" },
+
+  qrButton: {
+  marginTop: 8,
+  backgroundColor: "#F5A623",
+  borderRadius: 8,
+  paddingVertical: 10,
+  alignItems: "center",
+},
+qrButtonText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600" },
+modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.6)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+modalContent: {
+  backgroundColor: "#FFFFFF",
+  borderRadius: 16,
+  padding: 24,
+  alignItems: "center",
+  width: "85%",
+},
+modalTitle: { fontSize: 18, fontWeight: "700", color: "#1A1A1A", marginBottom: 6 },
+modalSubtitle: {
+  fontSize: 13,
+  color: "#6B7280",
+  textAlign: "center",
+  marginBottom: 16,
+},
+qrImage: { width: 220, height: 220, marginBottom: 20 },
+modalCloseButton: {
+  backgroundColor: "#2E5395",
+  borderRadius: 10,
+  paddingVertical: 12,
+  paddingHorizontal: 40,
+},
+modalCloseButtonText: { color: "#FFFFFF", fontSize: 15, fontWeight: "600" },
 });

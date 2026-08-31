@@ -76,12 +76,21 @@ exports.getMyRegistrations = async (req, res) => {
       where: { userId: req.user.id },
     });
 
-    const registrationsWithCertificates = registrations.map((reg) => {
-      const certificate = certificates.find((cert) => cert.eventId === reg.eventId);
-      return { ...reg, certificate: certificate || null };
-    });
+    const registrationsWithExtras = await Promise.all(
+      registrations.map(async (reg) => {
+        const certificate = certificates.find((cert) => cert.eventId === reg.eventId);
 
-    res.json(registrationsWithCertificates);
+        // Only generate a QR code if attendance hasn't been marked yet
+        let qrCode = null;
+        if (reg.status === "REGISTERED") {
+          qrCode = await QRCode.toDataURL(reg.id);
+        }
+
+        return { ...reg, certificate: certificate || null, qrCode };
+      })
+    );
+
+    res.json(registrationsWithExtras);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Something went wrong" });
@@ -111,7 +120,7 @@ exports.markAttendance = async (req, res) => {
       });
 
       // generate a certificate for this specific event
-      certificate = await generateCertificate(updatedUser, registration.event, HOURS_PER_EVENT);
+      certificate = await generateCertificate(updatedUser, registration.event, HOURS_PER_EVENT, registration.fullName);
     }
 
     res.json({ registration, certificate });
@@ -139,7 +148,7 @@ exports.scanAndMarkAttendance = async (req, res) => {
       data: { totalHours: { increment: HOURS_PER_EVENT } },
     });
 
-    const certificate = await generateCertificate(updatedUser, registration.event, HOURS_PER_EVENT);
+    const certificate = await generateCertificate(updatedUser, registration.event, HOURS_PER_EVENT, registration.fullName);
 
     res.json({ registration, certificate });
   } catch (err) {

@@ -11,6 +11,7 @@ async function generateCertificate(user, event, hours) {
 
   const pageWidth = doc.page.width;   // ~842
   const pageHeight = doc.page.height; // ~595
+  const centerY = pageHeight / 2;     // vertical center reference point
 
   // Borders
   doc.rect(20, 20, pageWidth - 40, pageHeight - 40).lineWidth(3).stroke("#2E5395");
@@ -18,32 +19,32 @@ async function generateCertificate(user, event, hours) {
 
   // Logo
   const logoPath = path.join(__dirname, "..", "..", "assets", "alkhidmat-logo.png");
-  doc.image(logoPath, pageWidth / 2 - 28, 45, { width: 56 });
+  doc.image(logoPath, pageWidth / 2 - 26, centerY - 160, { width: 52 });
 
   // Org name
   doc.fontSize(12).fillColor("#2E5395").font("Helvetica-Bold")
-    .text("ALKHIDMAT FOUNDATION", 0, 108, { align: "center" });
+    .text("ALKHIDMAT FOUNDATION", 0, centerY - 100, { align: "center" });
 
   // Title
   doc.fontSize(28).fillColor("#1A1A1A").font("Helvetica-Bold")
-    .text("CERTIFICATE OF APPRECIATION", 0, 135, { align: "center" });
+    .text("CERTIFICATE OF APPRECIATION", 0, centerY - 75, { align: "center" });
 
   // Decorative line
-  doc.moveTo(pageWidth / 2 - 100, 178).lineTo(pageWidth / 2 + 100, 178)
+  doc.moveTo(pageWidth / 2 - 100, centerY - 32).lineTo(pageWidth / 2 + 100, centerY - 32)
     .lineWidth(2).stroke("#F5A623");
 
   // Body text
   doc.fontSize(14).fillColor("#444444").font("Helvetica")
-    .text("This certificate is proudly presented to", 0, 210, { align: "center" });
+    .text("This certificate is proudly presented to", 0, centerY - 5, { align: "center" });
 
-  doc.fontSize(26).fillColor("#2E5395").font("Helvetica-Bold")
-    .text(user.name, 0, 235, { align: "center" });
+  doc.fontSize(26).fillColor("#1A1A1A").font("Helvetica-Bold")
+    .text(user.name.toUpperCase(), 0, centerY + 20, { align: "center" });
 
   doc.fontSize(14).fillColor("#444444").font("Helvetica")
-    .text(`in recognition of ${hours} hours of dedicated volunteer service for`, 0, 285, { align: "center" });
+    .text(`in recognition of ${hours} hours of dedicated volunteer service for`, 0, centerY + 65, { align: "center" });
 
   doc.fontSize(16).fillColor("#1A1A1A").font("Helvetica-Bold")
-    .text(`"${event.title}"`, 0, 310, { align: "center" });
+    .text(`"${event.title}"`, 0, centerY + 88, { align: "center" });
 
   // Footer
   const issueDate = new Date().toLocaleDateString("en-GB", {
@@ -51,9 +52,9 @@ async function generateCertificate(user, event, hours) {
   });
 
   doc.fontSize(11).fillColor("#666666").font("Helvetica")
-    .text(`Issued on ${issueDate}`, 0, pageHeight - 90, { align: "center" });
+    .text(`Issued on ${issueDate}`, 0, centerY + 140, { align: "center" });
   doc.fontSize(11).fillColor("#666666")
-    .text("Alkhidmat Volunteer Program", 0, pageHeight - 70, { align: "center" });
+    .text("Alkhidmat Volunteer Program", 0, centerY + 160, { align: "center" });
 
   doc.end();
 
@@ -79,13 +80,13 @@ async function generateCertificate(user, event, hours) {
   });
 
   const certificate = await prisma.certificate.create({
-  data: {
-    userId: user.id,
-    eventId: event.id,
-    fileUrl: uploadResult.secure_url,
-    hoursAtIssue: hours,
-  },
-});
+    data: {
+      userId: user.id,
+      eventId: event.id,
+      fileUrl: uploadResult.secure_url,
+      hoursAtIssue: hours,
+    },
+  });
 
   return certificate;
 }

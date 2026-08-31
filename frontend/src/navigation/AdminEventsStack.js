@@ -10,19 +10,12 @@ const Stack = createNativeStackNavigator();
 
 export default function AdminEventsStack() {
   return (
-        <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      screenListeners={({ navigation }) => ({
-        tabPress: () => {
-          navigation.popToTop();
-        },
-      })}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AdminEventList" component={AdminEventListScreen} />
       <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
       <Stack.Screen name="AdminFeedback" component={AdminFeedbackScreen} />
-            <Stack.Screen name="EditEvent" component={EditEventScreen} />
-                  <Stack.Screen name="EventAttendance" component={EventAttendanceScreen} />
+      <Stack.Screen name="EditEvent" component={EditEventScreen} />
+      <Stack.Screen name="EventAttendance" component={EventAttendanceScreen} />
     </Stack.Navigator>
   );
 }

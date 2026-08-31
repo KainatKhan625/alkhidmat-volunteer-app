@@ -27,7 +27,16 @@ export default function AdminTabs() {
       })}
     >
       <Tab.Screen name="Dashboard" component={AdminDashboardScreen} />
-      <Tab.Screen name="Events" component={AdminEventsStack} />
+      <Tab.Screen
+  name="Events"
+  component={AdminEventsStack}
+  listeners={({ navigation }) => ({
+    tabPress: (e) => {
+      e.preventDefault();
+      navigation.navigate("Events", { screen: "AdminEventList" });
+    },
+  })}
+/>
       <Tab.Screen name="Volunteers" component={VolunteersListScreen} />
       <Tab.Screen name="Profile" component={AdminProfileStack} />
     </Tab.Navigator>
