@@ -8,6 +8,7 @@ import LoginScreen from "../screens/auth/LoginScreen";
 import SignupScreen from "../screens/auth/SignupScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 import VolunteerTabs from "./VolunteerTabs";
+import AdminTabs from "./AdminTabs";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +27,10 @@ export default function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          <Stack.Screen name="Home" component={VolunteerTabs} />
+          <Stack.Screen
+  name="Home"
+  component={user?.role === "ADMIN" ? AdminTabs : VolunteerTabs}
+/>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />

@@ -6,7 +6,31 @@ const HOURS_PER_EVENT = 4;
 
 exports.registerForEvent = async (req, res) => {
   try {
-    const { eventId } = req.body;
+    const {
+      eventId,
+      fullName,
+      contactNumber,
+      cnic,
+      availability,
+      relevantExperience,
+      additionalNotes,
+    } = req.body;
+
+    if (!fullName || !fullName.trim()) {
+      return res.status(400).json({ message: "Full name is required" });
+    }
+
+    if (!contactNumber || !contactNumber.trim()) {
+      return res.status(400).json({ message: "Contact number is required" });
+    }
+
+    if (!cnic || !cnic.trim()) {
+      return res.status(400).json({ message: "CNIC number is required" });
+    }
+
+    if (!availability) {
+      return res.status(400).json({ message: "Availability is required" });
+    }
 
     const existing = await prisma.registration.findUnique({
       where: { userId_eventId: { userId: req.user.id, eventId } },
@@ -17,7 +41,16 @@ exports.registerForEvent = async (req, res) => {
     }
 
     const registration = await prisma.registration.create({
-      data: { userId: req.user.id, eventId },
+      data: {
+        userId: req.user.id,
+        eventId,
+        fullName: fullName.trim(),
+        contactNumber: contactNumber.trim(),
+        cnic: cnic.trim(),
+        availability,
+        relevantExperience: relevantExperience || null,
+        additionalNotes: additionalNotes || null,
+      },
     });
 
     // generate a QR code containing this registration's ID
@@ -38,7 +71,17 @@ exports.getMyRegistrations = async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
-    res.json(registrations);
+    // Fetch all certificates for this user, so we can match them to registrations by eventId
+    const certificates = await prisma.certificate.findMany({
+      where: { userId: req.user.id },
+    });
+
+    const registrationsWithCertificates = registrations.map((reg) => {
+      const certificate = certificates.find((cert) => cert.eventId === reg.eventId);
+      return { ...reg, certificate: certificate || null };
+    });
+
+    res.json(registrationsWithCertificates);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Something went wrong" });
@@ -99,6 +142,21 @@ exports.scanAndMarkAttendance = async (req, res) => {
     const certificate = await generateCertificate(updatedUser, registration.event, HOURS_PER_EVENT);
 
     res.json({ registration, certificate });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+exports.getEventRegistrations = async (req, res) => {
+  try {
+    const registrations = await prisma.registration.findMany({
+      where: { eventId: req.params.eventId },
+      include: { user: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    res.json(registrations);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Something went wrong" });

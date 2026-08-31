@@ -8,12 +8,12 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getEventById, registerForEvent } from "../../services/eventService";
+import { getEventById } from "../../services/eventService";
 
 export default function EventDetailScreen({ route, navigation }) {
   const { eventId } = route.params;
   const [event, setEvent] = useState(null);
-  const [registering, setRegistering] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -26,24 +26,6 @@ export default function EventDetailScreen({ route, navigation }) {
     })();
   }, [eventId]);
 
-  const handleRegister = async () => {
-    setRegistering(true);
-    try {
-      await registerForEvent(eventId);
-      Alert.alert(
-        "Registered!",
-        "You have successfully registered for this event. You'll receive a QR code for attendance.",
-        [{ text: "OK", onPress: () => navigation.goBack() }]
-      );
-    } catch (err) {
-      Alert.alert(
-        "Registration failed",
-        err.response?.data?.message || "Something went wrong. Please try again."
-      );
-    } finally {
-      setRegistering(false);
-    }
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -114,14 +96,16 @@ export default function EventDetailScreen({ route, navigation }) {
         <Text style={styles.description}>{event.description}</Text>
 
         <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-          disabled={registering}
-        >
-          <Text style={styles.buttonText}>
-            {registering ? "Registering..." : "Register for this Event"}
-          </Text>
-        </TouchableOpacity>
+  style={styles.button}
+  onPress={() =>
+    navigation.navigate("RegistrationForm", {
+      eventId: event.id,
+      eventTitle: event.title,
+    })
+  }
+>
+  <Text style={styles.buttonText}>Register for this Event</Text>
+</TouchableOpacity>
       </ScrollView>
     </View>
   );

@@ -11,6 +11,11 @@ exports.getAllEvents = async (req, res) => {
         ...(category && { category }),
       },
       orderBy: { date: "asc" },
+      include: {
+        _count: {
+          select: { registrations: true },
+        },
+      },
     });
 
     res.json(events);

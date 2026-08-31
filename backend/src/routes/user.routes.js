@@ -9,5 +9,7 @@ router.put("/:id/approve", authenticate, requireAdmin, userController.approveVol
 router.put("/:id/reject", authenticate, requireAdmin, userController.rejectVolunteer);
 router.get("/leaderboard", userController.getLeaderboard);
 router.post("/profile-picture", authenticate, upload.single("image"), userController.uploadProfilePicture);
+router.get("/dashboard-stats", authenticate, requireAdmin, userController.getDashboardStats);
+router.get("/volunteers", authenticate, requireAdmin, userController.getAllVolunteers);
 
 module.exports = router;

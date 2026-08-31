@@ -79,12 +79,13 @@ async function generateCertificate(user, event, hours) {
   });
 
   const certificate = await prisma.certificate.create({
-    data: {
-      userId: user.id,
-      fileUrl: uploadResult.secure_url,
-      hoursAtIssue: hours,
-    },
-  });
+  data: {
+    userId: user.id,
+    eventId: event.id,
+    fileUrl: uploadResult.secure_url,
+    hoursAtIssue: hours,
+  },
+});
 
   return certificate;
 }

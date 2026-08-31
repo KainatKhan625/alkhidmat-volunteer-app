@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
     setUser(userData);
   };
 
-  const logout = async () => {
+    const logout = async () => {
     console.log("Logout button pressed");
     try {
       await AsyncStorage.multiRemove(["token", "user"]);
@@ -37,8 +37,14 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const updateUser = async (updatedFields) => {
+    const newUser = { ...user, ...updatedFields };
+    await AsyncStorage.setItem("user", JSON.stringify(newUser));
+    setUser(newUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

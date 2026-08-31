@@ -34,3 +34,19 @@ exports.getEventFeedback = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+exports.getAllFeedback = async (req, res) => {
+  try {
+    const feedback = await prisma.feedback.findMany({
+      include: {
+        user: { select: { name: true } },
+        event: { select: { title: true, category: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(feedback);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
