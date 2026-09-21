@@ -5,6 +5,7 @@ import CreateEventScreen from "../screens/admin/CreateEventScreen";
 import AdminFeedbackScreen from "../screens/admin/AdminFeedbackScreen";
 import EditEventScreen from "../screens/admin/EditEventScreen";
 import EventAttendanceScreen from "../screens/admin/EventAttendanceScreen";
+import QRScannerScreen from "../screens/admin/QRScannerScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ export default function AdminEventsStack() {
       <Stack.Screen name="AdminFeedback" component={AdminFeedbackScreen} />
       <Stack.Screen name="EditEvent" component={EditEventScreen} />
       <Stack.Screen name="EventAttendance" component={EventAttendanceScreen} />
+      <Stack.Screen name="QRScanner" component={QRScannerScreen} />
     </Stack.Navigator>
   );
 }

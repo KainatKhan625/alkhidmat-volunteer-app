@@ -3,7 +3,7 @@ const path = require("path");
 const cloudinary = require("../config/cloudinary");
 const prisma = require("../config/prisma");
 
-async function generateCertificate(user, event, hours) {
+async function generateCertificate(user, event, hours, displayName) {
   const doc = new PDFDocument({ size: "A4", layout: "landscape", margin: 0 });
   const buffers = [];
 
@@ -38,7 +38,7 @@ async function generateCertificate(user, event, hours) {
     .text("This certificate is proudly presented to", 0, centerY - 5, { align: "center" });
 
   doc.fontSize(26).fillColor("#1A1A1A").font("Helvetica-Bold")
-    .text(user.name.toUpperCase(), 0, centerY + 20, { align: "center" });
+    .text((displayName || user.name).toUpperCase(), 0, centerY + 20, { align: "center" });
 
   doc.fontSize(14).fillColor("#444444").font("Helvetica")
     .text(`in recognition of ${hours} hours of dedicated volunteer service for`, 0, centerY + 65, { align: "center" });

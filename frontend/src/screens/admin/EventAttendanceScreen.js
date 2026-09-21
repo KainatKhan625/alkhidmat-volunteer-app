@@ -57,14 +57,20 @@ export default function EventAttendanceScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.appName}>Attendance</Text>
-          <Text style={styles.header} numberOfLines={1}>{eventTitle}</Text>
-        </View>
-      </View>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+    <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+  </TouchableOpacity>
+  <View style={{ flex: 1 }}>
+    <Text style={styles.appName}>Attendance</Text>
+    <Text style={styles.header} numberOfLines={1}>{eventTitle}</Text>
+  </View>
+  <TouchableOpacity
+    onPress={() => navigation.navigate("QRScanner")}
+    style={styles.scanButton}
+  >
+    <Ionicons name="qr-code-outline" size={24} color="#FFFFFF" />
+  </TouchableOpacity>
+</View>
 
       {!loading && registrations.length === 0 && (
         <Text style={styles.emptyText}>No volunteers registered for this event yet.</Text>
@@ -139,6 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   backButton: { marginRight: 12 },
+  scanButton: { marginLeft: 12 },
   appName: { fontSize: 13, color: "#C7D4E8", fontWeight: "500", marginBottom: 2 },
   header: { fontSize: 18, fontWeight: "bold", color: "#FFFFFF" },
   emptyText: { textAlign: "center", color: "#6B7280", marginTop: 40 },
