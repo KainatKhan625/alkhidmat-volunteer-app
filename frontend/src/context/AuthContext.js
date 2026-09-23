@@ -1,5 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  registerForPushNotificationsAsync,
+  savePushTokenToBackend,
+} from "../services/notificationService";
 
 const AuthContext = createContext(null);
 
@@ -24,9 +28,19 @@ export function AuthProvider({ children }) {
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
+
+    // Register for push notifications after login
+    try {
+      const pushToken = await registerForPushNotificationsAsync();
+      if (pushToken) {
+        await savePushTokenToBackend(pushToken);
+      }
+    } catch (err) {
+      console.log("Error setting up push notifications:", err);
+    }
   };
 
-    const logout = async () => {
+  const logout = async () => {
     console.log("Logout button pressed");
     try {
       await AsyncStorage.multiRemove(["token", "user"]);

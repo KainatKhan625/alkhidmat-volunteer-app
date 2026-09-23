@@ -227,3 +227,24 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+
+exports.savePushToken = async (req, res) => {
+  try {
+    const { pushToken } = req.body;
+
+    if (!pushToken) {
+      return res.status(400).json({ message: "Push token is required" });
+    }
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { pushToken },
+    });
+
+    res.json({ message: "Push token saved successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

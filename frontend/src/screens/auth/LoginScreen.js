@@ -8,12 +8,14 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { login as loginApi } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
@@ -53,13 +55,26 @@ export default function LoginScreen({ navigation }) {
         autoCapitalize="none"
         keyboardType="email-address"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+
+      <View style={styles.passwordWrapper}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Ionicons
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
+            size={22}
+            color="#6B7280"
+          />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
         <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
@@ -72,8 +87,8 @@ export default function LoginScreen({ navigation }) {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-  <Text style={styles.linkBold}>Forgot password?</Text>
-</TouchableOpacity>
+        <Text style={styles.linkBold}>Forgot password?</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -106,6 +121,22 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     fontSize: 15,
   },
+  passwordWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 10,
+    marginBottom: 14,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 14,
+    fontSize: 15,
+  },
+  eyeIcon: {
+    paddingHorizontal: 12,
+  },
   button: {
     backgroundColor: "#2E5395",
     borderRadius: 10,
@@ -125,10 +156,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkBold: {
-  fontWeight: "bold",
-  color: "#2E5395",
-  textAlign: "center",
-  marginTop: 16,
-  fontSize: 14,
-},
+    fontWeight: "bold",
+    color: "#2E5395",
+    textAlign: "center",
+    marginTop: 16,
+    fontSize: 14,
+  },
 });
