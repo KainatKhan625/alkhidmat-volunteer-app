@@ -4,6 +4,9 @@ import { API_BASE_URL } from "../constants/config";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    "ngrok-skip-browser-warning": "true",
+  },
 });
 
 // Automatically attach the auth token to every request, if logged in

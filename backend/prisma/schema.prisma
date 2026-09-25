@@ -37,11 +37,11 @@ model User {
   designation String?
   department  String?
 
-  registrations Registration[]
+    registrations Registration[]
   certificates  Certificate[]
   feedbacks     Feedback[]
+  notifications Notification[]
 }
-
 model Event {
   id            String   @id @default(uuid())
   title         String
@@ -52,9 +52,10 @@ model Event {
   date          DateTime
   seatsRequired Int
   createdAt     DateTime @default(now())
-  registrations Registration[]
+    registrations Registration[]
   certificates Certificate[]
   feedbacks Feedback[]
+  notifications Notification[]
 }
 
 enum AttendanceStatus {
@@ -105,4 +106,17 @@ model Feedback {
 
   user  User  @relation(fields: [userId], references: [id])
   event Event @relation(fields: [eventId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String?
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id])
+  event Event? @relation(fields: [eventId], references: [id])
 }

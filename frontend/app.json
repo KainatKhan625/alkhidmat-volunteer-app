@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "frontend",
+    "name": "Alkhidmat Volunteer",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/alkhidmat-logo.png",
     "scheme": "frontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,22 +12,21 @@
       "supportsTablet": true
     },
     "android": {
-  "package": "com.alkhidmat.volunteerapp",
-  "googleServicesFile": "./google-services.json",
-  "adaptiveIcon": {
-    "backgroundColor": "#E6F4FE",
-    "foregroundImage": "./assets/images/android-icon-foreground.png",
-    "backgroundImage": "./assets/images/android-icon-background.png",
-    "monochromeImage": "./assets/images/android-icon-monochrome.png"
-  },
-  "edgeToEdgeEnabled": true,
-  "predictiveBackGestureEnabled": false
-},
+      "package": "com.alkhidmat.volunteerapp",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "backgroundColor": "#2E5395",
+        "foregroundImage": "./assets/images/alkhidmat-logo.png",
+        "monochromeImage": "./assets/images/alkhidmat-logo.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-        "plugins": [
+    "plugins": [
       [
         "expo-splash-screen",
         {
@@ -40,6 +39,11 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2aa59bf9-7e31-4bbb-b56f-c1aedfaae0b7"
+      }
+    }
   }
 }

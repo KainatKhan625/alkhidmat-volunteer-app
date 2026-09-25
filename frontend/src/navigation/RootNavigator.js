@@ -21,9 +21,9 @@ export default function RootNavigator() {
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+        const timer = setTimeout(() => {
       setMinTimeElapsed(true);
-    }, 2500); // splash screen kam se kam 2.5 seconds dikhegi
+    }, 4000);
     return () => clearTimeout(timer);
   }, []);
 

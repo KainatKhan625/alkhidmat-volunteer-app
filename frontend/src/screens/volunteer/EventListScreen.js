@@ -8,11 +8,29 @@ import {
   RefreshControl,
 } from "react-native";
 import { getEvents } from "../../services/eventService";
+import { Ionicons } from "@expo/vector-icons";
+import { fetchUnreadCount } from "../../services/notifications";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function EventListScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadUnreadCount = async () => {
+        try {
+          const count = await fetchUnreadCount();
+          setUnreadCount(count);
+        } catch (err) {
+          console.log("Error fetching unread count:", err);
+        }
+      };
+      loadUnreadCount();
+    }, [])
+  );
 
   const fetchEvents = async () => {
     try {
@@ -49,8 +67,19 @@ export default function EventListScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.appName}>Alkhidmat Volunteer</Text>
-        <Text style={styles.header}>Upcoming Events</Text>
+        <View style={styles.topBarRow}>
+          <View style={styles.titleBlock}>
+            <Text style={styles.appName}>Alkhidmat Volunteer</Text>
+            <Text style={styles.header}>Upcoming Events</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.bellButton}
+            onPress={() => navigation.navigate("Notifications")}
+          >
+            <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+            {unreadCount > 0 && <View style={styles.redDot} />}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {!loading && events.length === 0 && (
@@ -98,6 +127,29 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginBottom: 16,
+  },
+  topBarRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  titleBlock: {
+    flex: 1,
+  },
+  bellButton: {
+    position: "relative",
+    padding: 6,
+  },
+  redDot: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#EF4444",
+    borderWidth: 1.5,
+    borderColor: "#2E5395",
   },
   appName: {
     fontSize: 13,

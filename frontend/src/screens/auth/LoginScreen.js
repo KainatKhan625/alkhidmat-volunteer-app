@@ -129,10 +129,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 14,
   },
-  passwordInput: {
+    passwordInput: {
     flex: 1,
     padding: 14,
     fontSize: 15,
+    color: "#000000",
   },
   eyeIcon: {
     paddingHorizontal: 12,

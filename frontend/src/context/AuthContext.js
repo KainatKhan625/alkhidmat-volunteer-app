@@ -30,8 +30,10 @@ export function AuthProvider({ children }) {
     setUser(userData);
 
     // Register for push notifications after login
+    console.log("LOGIN: about to call registerForPushNotificationsAsync");
     try {
       const pushToken = await registerForPushNotificationsAsync();
+      console.log("LOGIN: pushToken received:", pushToken);
       if (pushToken) {
         await savePushTokenToBackend(pushToken);
       }
